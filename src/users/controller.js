@@ -49,7 +49,7 @@ const signup = async (req, res) => {
           if (err) throw err;
           res.status(201).json({
             data: { email, name, gender, age },
-            message: "شما با موفقیت ثبت نام شدید",
+            message: "شما با موفقیت ثبت نام شدید. لطفا وارد شوید",
           });
         }
       );
@@ -74,7 +74,7 @@ const signin = (req, res) => {
         });
       } else {
         //check if the password is correct
-        const { email, password, name } = results.rows[0];
+        const { email, password, name, gender, age } = results.rows[0];
         bcrypt.compare(req.body.password, password, function (err, result) {
           if (err) throw err;
           if (result) {
@@ -83,7 +83,7 @@ const signin = (req, res) => {
               expiresIn: "1h",
             });
             res.status(200).json({
-              data: { email, name, token },
+              data: { email, name, gender, age, token },
               message: "شما با موفقیت وارد شدید",
             });
           } else {
@@ -255,10 +255,38 @@ const reserve = (req, res) => {
   }
 };
 
+const getUserReservations = (req, res) => {
+  const userId = req.params.id;
+
+  pool.query(queries.getReservationsByUserId, [userId], (err, results) => {
+    try {
+      if (err) throw err;
+      const reservations = results.rows;
+      if (reservations.length) {
+        res.status(200).json({
+          data: reservations,
+          message: "عملیات با موفقیت انجام شد",
+        });
+      } else {
+        res.status(404).json({
+          data: null,
+          message: "درخواستی موجود نمی باشد",
+        });
+      }
+    } catch (error) {
+      res.status(500).json({
+        data: null,
+        message: error.message,
+      });
+    }
+  });
+};
+
 module.exports = {
   signup,
   signin,
   updateUser,
   getUser,
   reserve,
+  getUserReservations,
 };

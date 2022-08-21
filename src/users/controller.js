@@ -11,9 +11,10 @@ const hash = async (text) => {
   return hash;
 };
 
-const signup = async (req, res) => {
+const signup = (req, res) => {
   //check if the user is already signed up
   let alreadySignedUp = false;
+  let alreadyRespond = false;
   pool.query(queries.getUserByEmail, [req.body.email], (err, results) => {
     try {
       if (err) throw err;
@@ -23,13 +24,16 @@ const signup = async (req, res) => {
           data: null,
           message: "این ایمیل قبلا استفاده شده است",
         });
+        alreadyRespond = true;
       }
     } catch (error) {
-      console.log(error);
-      res.status(500).json({
-        data: null,
-        message: error.message,
-      });
+      if (!alreadyRespond) {
+        res.status(500).json({
+          data: null,
+          message: error.message,
+        });
+        alreadyRespond = true;
+      }
     }
   });
 
@@ -39,7 +43,7 @@ const signup = async (req, res) => {
 
     //crypting password
     try {
-      const passHashed = await hash(password);
+      const passHashed = hash(password);
 
       // adding user to the db
       pool.query(
@@ -51,19 +55,25 @@ const signup = async (req, res) => {
             data: { email, name, gender, age },
             message: "شما با موفقیت ثبت نام شدید. لطفا وارد شوید",
           });
+          alreadyRespond = true;
         }
       );
     } catch (error) {
-      res.status(500).json({
-        data: null,
-        message: error.message,
-      });
+      if (!alreadyRespond) {
+        res.status(500).json({
+          data: null,
+          message: error.message,
+        });
+        alreadyRespond = true;
+      }
     }
   }
 };
 
 const signin = (req, res) => {
   pool.query(queries.getUserByEmail, [req.body.email], (err, results) => {
+    let alreadyRespond = false;
+
     try {
       if (err) throw err;
       if (!results.rows.length) {
@@ -72,9 +82,10 @@ const signin = (req, res) => {
           data: null,
           message: "ایمیل یا پسورد نادرست است",
         });
+        alreadyRespond = true;
       } else {
         //check if the password is correct
-        const { email, password, name, gender, age } = results.rows[0];
+        const { id, email, password, name, gender, age, isadmin } = results.rows[0];
         bcrypt.compare(req.body.password, password, function (err, result) {
           if (err) throw err;
           if (result) {
@@ -83,7 +94,7 @@ const signin = (req, res) => {
               expiresIn: "1h",
             });
             res.status(200).json({
-              data: { email, name, gender, age, token },
+              data: { userId: id, email, name, gender, age, token, isadmin },
               message: "شما با موفقیت وارد شدید",
             });
           } else {
@@ -95,11 +106,12 @@ const signin = (req, res) => {
         });
       }
     } catch (error) {
-      console.log(error);
-      res.status(500).json({
-        data: null,
-        message: error.message,
-      });
+      if (!alreadyRespond) {
+        res.status(500).json({
+          data: null,
+          message: error.message,
+        });
+      }
     }
   });
 };

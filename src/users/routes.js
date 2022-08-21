@@ -6,9 +6,9 @@ const isLoggined = require("../middlewares/isLoggined");
 const router = Router();
 
 //user funcs
-router.post("/signup", controller.signup);
+router.post("/signup", (req, res) => controller.signup(req, res));
 
-router.post("/signin", controller.signin);
+router.post("/signin", (req, res) => controller.signin(req, res));
 
 router.use("/update", isLoggined);
 router.put("/update", (req, res) => controller.updateUser(req, res));

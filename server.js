@@ -3,23 +3,14 @@ const usersRoutes = require("./src/users/routes");
 const reservationsRoutes = require("./src/reservations/routes");
 
 const app = express();
-const port = 3000;
+const port = process.env.FALINOOS_PORT | 3000;
 
 require("./config")(app, express);
-
-app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header(
-    "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept"
-  );
-  next();
-});
 
 app.get("/", (req, res) => {
   res.json({
     data: null,
-    message: "Welcome!",
+    message: "node app is working...",
   });
 });
 

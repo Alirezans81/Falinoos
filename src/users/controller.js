@@ -11,7 +11,7 @@ const hash = async (text) => {
   return hash;
 };
 
-const signup = (req, res) => {
+const signup = async (req, res) => {
   //check if the user is already signed up
   let alreadySignedUp = false;
   let alreadyRespond = false;
@@ -43,7 +43,8 @@ const signup = (req, res) => {
 
     //crypting password
     try {
-      const passHashed = hash(password);
+      const passHashed = await hash(password);
+      console.log(passHashed);
 
       // adding user to the db
       pool.query(

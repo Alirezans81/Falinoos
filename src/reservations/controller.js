@@ -20,9 +20,6 @@ const getReservations = (req, res) => {
           }
         );
 
-        //converting date to persian date
-        reservation.date = shamsi.gregorianToJalali(reservation.date);
-
         //returning reservations
         return reservation;
       });
@@ -57,9 +54,6 @@ const getReservationsById = (req, res) => {
             reservation.user = resu.rows[0];
           }
         );
-
-        //converting date to persian date
-        reservation.date = shamsi.gregorianToJalali(reservation.date);
 
         //returning reservations
         return reservation;

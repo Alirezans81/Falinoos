@@ -16,11 +16,11 @@ router.put("/update", (req, res) => controller.updateUser(req, res));
 router.use("/:id/reservations", isLoggined);
 router.put("/:id/reservations", (req, res) => controller.getUserReservations(req, res));
 
-router.use("/:id", isLoggined, isAdmin);
-router.get("/:id", (req, res) => controller.getUser(req, res));
-
 //reservation func
 router.use("/reserve", isLoggined);
 router.post("/reserve", (req, res) => controller.reserve(req, res));
+
+router.use("/:id", isLoggined, isAdmin);
+router.get("/:id", (req, res) => controller.getUser(req, res));
 
 module.exports = router;

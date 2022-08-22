@@ -44,7 +44,6 @@ const signup = async (req, res) => {
     //crypting password
     try {
       const passHashed = await hash(password);
-      console.log(passHashed);
 
       // adding user to the db
       pool.query(
@@ -86,7 +85,8 @@ const signin = (req, res) => {
         alreadyRespond = true;
       } else {
         //check if the password is correct
-        const { id, email, password, name, gender, age, isadmin } = results.rows[0];
+        const { id, email, password, name, gender, age, isadmin } =
+          results.rows[0];
         bcrypt.compare(req.body.password, password, function (err, result) {
           if (err) throw err;
           if (result) {
@@ -236,20 +236,20 @@ const getUser = (req, res) => {
 };
 
 const reserve = (req, res) => {
-  const userId = body.user.id;
-  const userName = body.user.name;
-  const { disease, date, phoneNumber } = req.body;
+  const userId = req.user.id;
+  const userName = req.user.name;
+  const { disease, date, phone } = req.body;
 
-  if (disease && data && phoneNumber) {
+  if (disease && date && phone) {
     //adding the reservation to the database
     pool.query(
       queries.resreve,
-      [userId, disease, date, phoneNumber],
+      [userId, userName, disease, date, phone],
       (err, results) => {
         try {
           if (err) throw err;
           res.status(201).json({
-            data: { userName, disease, date, phoneNumber },
+            data: { userName, disease, date, phone },
             message: "درخواست شما با موفقیت ثبت شد",
           });
         } catch (error) {

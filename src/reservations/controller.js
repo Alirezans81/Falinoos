@@ -1,7 +1,6 @@
 const pool = require("../../db");
 const queries = require("./queries");
 const userQueries = require("../users/queries");
-const shamsi = require("shamsi-date-converter");
 
 const getReservations = (req, res) => {
   pool.query(queries.getReservations, [], (err, results) => {
@@ -73,7 +72,31 @@ const getReservationsById = (req, res) => {
   });
 };
 
+const setReservationStatus = (req, res) => {
+  const { reservationId, status } = req.body;
+
+  pool.query(
+    queries.setReservationStatus,
+    [status, reservationId],
+    (err, result) => {
+      try {
+        if (err) throw err;
+        res.status(200).json({
+          data: { reservationId, status },
+          message: "وضعیت درخواست تغییر کرد",
+        });
+      } catch (error) {
+        res.status(400).json({
+          data: null,
+          message: error.message,
+        });
+      }
+    }
+  );
+};
+
 module.exports = {
   getReservations,
   getReservationsById,
+  setReservationStatus,
 };

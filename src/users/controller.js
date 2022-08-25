@@ -236,20 +236,28 @@ const getUser = (req, res) => {
 };
 
 const reserve = (req, res) => {
-  const userId = req.user.id;
-  const userName = req.user.name;
-  const { disease, date, phone } = req.body;
+  // const userId = +req.user.id;
+  // const userName = req.user.name;
+  // const { disease, date, phone } = req.body;
+  // const status = "در انتظار بررسی";
+  
+  const userId = 3;
+  const userName = 'علیرضا محمدی';
+  const disease = 'سرطان';
+  const date = '1401/10/10';
+  const phone = '09031256543';
+  const status = "در انتظار بررسی";
 
   if (disease && date && phone) {
     //adding the reservation to the database
     pool.query(
-      queries.resreve,
-      [userId, userName, disease, date, phone],
+      queries.reserve,
+      [userId, userName, disease, date, phone, status],
       (err, results) => {
         try {
           if (err) throw err;
           res.status(201).json({
-            data: { userName, disease, date, phone },
+            data: { userId, userName, disease, date, phone, status },
             message: "درخواست شما با موفقیت ثبت شد",
           });
         } catch (error) {

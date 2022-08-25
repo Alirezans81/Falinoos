@@ -1,0 +1,18 @@
+<-- users -->
+CREATE TABLE users (
+id SERIAL PRIMARY KEY,
+email VARCHAR(255),
+password VARCHAR(255),
+name VARCHAR(255),
+gender VARCHAR(10),
+age INT,
+isadmin BOOLEAN);
+
+<-- reservations -->
+CREATE TABLE reservations (
+userid INT,
+username VARCHAR(255),
+disease VARCHAR(255),
+date VARCHAR(20),
+phone VARCHAR(20),
+status VARCHAR(255));
